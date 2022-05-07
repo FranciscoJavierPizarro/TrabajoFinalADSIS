@@ -214,8 +214,35 @@ No podemos probar todavía que funciona debido a que todavía no hay un servidor
 Para comprobar las rutas de un equipo usamos:
 
 > ip route
-
 ### Debian1
+
+Para poder acceder a la red interna3 desde el resto de la red debemos añadir la ruta
+
+> sudo vi /etc/network/interfaces
+
+Justo debajo de la definición de enp0s9(red interna2) añadimos:
+
+```
+up ip route add 10.0.3.0/24 via 10.0.1.2
+```
+
+Guardamos el archivo y aplicamos los cambios usando el siguiente comando:
+
+> sudo systemctl restart networking
+
+# **Reaally confused unga bunga**
+
+Por motivos desconocidos la instrucción anterior en esta máquina da un bug en el que todos los interfaces funcionan excepto la NAT(enp0s3), en su lugar ejecutar
+
+> sudo shutdown -r now
+
+Para probar que el routing funciona bien ejecutamos:
+
+> ping 10.0.3.1
+> 
+> ping 10.0.3.2
+
+Si las máquina nos responden, significa que hemos configurado la ruta correctamente.
 
 ## Servidor dhcp
 
@@ -292,3 +319,4 @@ Con el servidor instalado modificamos el archivo /usr/share/nginx/html con el co
 
 
 ## Firewall
+
