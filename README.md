@@ -347,3 +347,54 @@ Borramos las reglas temporales del firewall reiniciando el equipo:
 
 ## Firewall
 
+### Debian1
+
+Ejecutamos los siguientes comandos para configurar el firewall:
+
+- Limpiar tablas anteriores
+
+```
+sudo iptables -F
+sudo iptables -X
+sudo iptables -Z
+sudo iptables -t nat -F
+```
+
+- Rechazar todo por defecto
+
+```
+sudo iptables -P INPUT DROP
+sudo iptables -P FORWARD DROP
+```
+
+- Permitir conexiones internas
+
+```
+sudo iptables -A FORWARD -i enp0s8 -j ACCEPT
+sudo iptables -A FORWARD -i enp0s9 -j ACCEPT
+sudo iptables -A INPUT -i enp0s8 -j ACCEPT
+sudo iptables -A INPUT -i enp0s9 -j ACCEPT
+sudo iptables -A OUTPUT -j ACCEPT
+```
+
+- Host-only
+
+```
+sudo iptables -A INPUT -i enp0s10 -m state --state ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -A FORWARD -i enp0s10 -m state --state ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -t nat -A POSTROUTING -o enp0s10 -j SNAT --to 192.168.57.2
+sudo iptables -A FORWARD -i enp0s10 -p tcp --dport 80 -j ACCEPT
+sudo iptables -A FORWARD -i enp0s10 -p tcp --dport ssh -j ACCEPT
+sudo iptables -t nat -A PREROUTING -i enp0s10 -p tcp --dport 80 -j DNAT --to 10.0.0.2
+sudo iptables -t nat -A PREROUTING -i enp0s10 -p tcp --dport ssh -j DNAT --to 10.0.3.2
+```
+
+- Internet
+
+```
+sudo iptables -A INPUT -i enp0s3 -m state --state ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -A FORWARD -i enp0s3 -m state --state ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -t nat -A POSTROUTING -o enp0s3 -j SNAT --to 192.168.57.2
+```
+
+Ejecutar los siguientes comandos para poder guardar la configuración
