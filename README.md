@@ -305,18 +305,45 @@ Probamos que el servidor ssh que se ejecuta por defecto en debian5 nos permite c
 
 ## Servidor nginx
 
+### Debian1
+
+Dado que necesitamos tener acceso a internet desde la red interna pero aún no hemos configurado el firewall de manera temporal vamos a habilitar la conexión mediante:
+
+> sudo iptables -A OUTPUT -j ACCEPT
+> 
+> sudo iptables -A INPUT -i enp0s3 -m state --state ESTABLISHED,RELATED -j ACCEPT
+> 
+> sudo iptables -t nat -A POSTROUTING -o enp0s3 -j SNAT --to 192.168.57.2
+
+Adicionalmente para comprobar que el servidor funciona correctamente:
+
+> sudo iptables -t nat -A PREROUTING -i enp0s10 -p tcp --dport 80 -j DNAT --to 10.0.0.2 
+
+
 ### Debian2
 
-Instalamos el servidor web nginx
+Actualizamos las dependencias y instalamos el servidor web nginx
 
+> sudo apt update
+> 
 > sudo apt install nginx
 
-Con el servidor instalado modificamos el archivo /usr/share/nginx/html con el contenido que queremos mostrar en nuestro servidor web.
+Con el servidor instalado modificamos el archivo /var/www/html/index.nginx-debian.html con el contenido que queremos mostrar en nuestro servidor web.
 
-<!-- Para aplicar los cambios ejecutamos el siguiente comando:
+Para aplicar los cambios ejecutamos el siguiente comando:
 
-> systemctl restart nginx -->
+> sudo systemctl restart nginx
 
+Para probar que todo funciona abrimos un navegador en la máquina host y buscamos esto
+
+> 192.168.57.2:80
+
+
+### Debian1
+
+Borramos las reglas temporales del firewall reiniciando el equipo:
+
+> sudo shutdown -r now
 
 ## Firewall
 
