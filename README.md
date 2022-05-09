@@ -349,6 +349,8 @@ Borramos las reglas temporales del firewall reiniciando el equipo:
 
 ### Debian1
 
+> sudo apt install iptables-persistent
+
 Ejecutamos los siguientes comandos para configurar el firewall:
 
 - Limpiar tablas anteriores
@@ -365,6 +367,7 @@ sudo iptables -t nat -F
 ```
 sudo iptables -P INPUT DROP
 sudo iptables -P FORWARD DROP
+sudo iptables -A INPUT -i lo -j ACCEPT
 ```
 
 - Permitir conexiones internas
@@ -380,7 +383,7 @@ sudo iptables -A OUTPUT -j ACCEPT
 - Host-only
 
 ```
-sudo iptables -A INPUT -i enp0s10 -m state --state ESTABLISHED,RELATED -j ACCEPT
+#sudo iptables -A INPUT -i enp0s10 -m state --state ESTABLISHED,RELATED -j ACCEPT
 sudo iptables -A FORWARD -i enp0s10 -m state --state ESTABLISHED,RELATED -j ACCEPT
 sudo iptables -t nat -A POSTROUTING -o enp0s10 -j SNAT --to 192.168.57.2
 sudo iptables -A FORWARD -i enp0s10 -p tcp --dport 80 -j ACCEPT
@@ -398,3 +401,5 @@ sudo iptables -t nat -A POSTROUTING -o enp0s3 -j SNAT --to 192.168.57.2
 ```
 
 Ejecutar los siguientes comandos para poder guardar la configuración
+
+> sudo iptables-save > /etc/iptables/rules.v4
