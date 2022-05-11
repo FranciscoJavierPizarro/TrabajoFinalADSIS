@@ -54,8 +54,6 @@ Guardar los cambios en el fichero y para aplicar los cambios ejecutar los siguie
 > 
 > sudo systemctl restart networking
 
-# **Reaally confused unga bunga**
-
 Por motivos desconocidos la instrucción anterior en Debian1 da un bug en el que todos los interfaces funcionan excepto la NAT(enp0s3), en su lugar ejecutar
 
 > sudo shutdown -r now
@@ -90,8 +88,6 @@ Guardamos el archivo y aplicamos los cambios usando el siguiente comando:
 
 > sudo systemctl restart networking
 
-# **Reaally confused unga bunga**
-
 Por motivos desconocidos la instrucción anterior en esta máquina da un bug en el que todos los interfaces funcionan excepto la NAT(enp0s3), en su lugar ejecutar
 
 > sudo shutdown -r now
@@ -100,7 +96,7 @@ Comprobamos que los cambios hayan surtido efecto
 
 > ip a
 
-Probamos la conexión con el host mediante:
+Probamos la conexión con el host mediante(en windows por motivos del SO anfitrión parece no funcionar):
 
 > ping 192.168.57.1
 
@@ -203,9 +199,9 @@ Comentamos las lineas que definen enp0s3 y escribimos lo siguiente:
 auto enp0s3
 iface enp0s3 inet dhcp
 ```
-Guardamos el fichero y ejecutamos el siguiente comando para que los cambios surtan efecto:
+Guardamos el fichero y apagamos las maquinas hasta que podamos probar los cambios.
 
-> sudo systemctl restart networking
+> sudo shutdown now
 
 No podemos probar todavía que funciona debido a que todavía no hay un servidor dhcp ejecutandose.
 
@@ -229,8 +225,6 @@ up ip route add 10.0.3.0/24 via 10.0.1.2
 Guardamos el archivo y aplicamos los cambios usando el siguiente comando:
 
 > sudo systemctl restart networking
-
-# **Reaally confused unga bunga**
 
 Por motivos desconocidos la instrucción anterior en esta máquina da un bug en el que todos los interfaces funcionan excepto la NAT(enp0s3), en su lugar ejecutar
 
@@ -301,7 +295,7 @@ Si recibimos respuesta es que todo funciona correctamente
 
 Probamos que el servidor ssh que se ejecuta por defecto en debian5 nos permite conectarnos  mediante:
 
-> ssh 10.0.2.2
+> ssh 10.0.3.2
 
 ## Servidor nginx
 
@@ -403,3 +397,11 @@ sudo iptables -t nat -A POSTROUTING -o enp0s3 -j SNAT --to 192.168.57.2
 Ejecutar los siguientes comandos para poder guardar la configuración
 
 > sudo iptables-save > /etc/iptables/rules.v4
+
+Si da un error de permisos hacer:
+
+> sudo iptables-save > /home/as/fir
+> 
+> su root
+> 
+> cat /home/as/fir > /etc/iptables/rules.v4
